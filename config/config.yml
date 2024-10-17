@@ -1,0 +1,12 @@
+db:
+  user: postgres
+  password: postgres
+  dbname: matcha
+  sslmode: disable
+  host: db
+  port: "5432"
+
+redis:
+  addr: redis:6379
+  password: ""
+  db: 0

@@ -1,0 +1,175 @@
+{
+  "info": {
+    "_postman_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+    "name": "Rider Assignment System API",
+    "description": "API collection for testing the Rider Assignment System",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Create Rider",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"name\": \"John Doe\"\n}"
+        },
+        "url": {
+          "raw": "http://localhost:8080/riders",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "8080",
+          "path": ["riders"]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Create Driver",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"name\": \"Alice Smith\",\n  \"latitude\": 37.7750,\n  \"longitude\": -122.4183\n}"
+        },
+        "url": {
+          "raw": "http://localhost:8080/drivers",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "8080",
+          "path": ["drivers"]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Get Driver",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:8080/drivers/1",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "8080",
+          "path": ["drivers", "1"]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Update Driver Status",
+      "request": {
+        "method": "PUT",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"status\": \"available\"\n}"
+        },
+        "url": {
+          "raw": "http://localhost:8080/drivers/1/status",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "8080",
+          "path": ["drivers", "1", "status"]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Update Driver Location",
+      "request": {
+        "method": "PUT",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"latitude\": 37.7750,\n  \"longitude\": -122.4183\n}"
+        },
+        "url": {
+          "raw": "http://localhost:8080/drivers/1/location",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "8080",
+          "path": ["drivers", "1", "location"]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Request Ride",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"rider_id\": 1,\n  \"start_latitude\": 37.7749,\n  \"start_longitude\": -122.4194,\n  \"end_latitude\": 37.8044,\n  \"end_longitude\": -122.2711\n}"
+        },
+        "url": {
+          "raw": "http://localhost:8080/trips",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "8080",
+          "path": ["trips"]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Get Trip",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:8080/trips/1",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "8080",
+          "path": ["trips", "1"]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Complete Trip",
+      "request": {
+        "method": "PUT",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:8080/trips/1/complete",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "8080",
+          "path": ["trips", "1", "complete"]
+        }
+      },
+      "response": []
+    }
+  ]
+}
