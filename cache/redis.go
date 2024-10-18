@@ -1,24 +1,40 @@
 package cache
 
 import (
+	"context"
+	"fmt"
 	"github.com/go-redis/redis/v8"
 	"log"
-	"rider-assignment-system/config"
+	"os"
 )
 
-var RedisClient *redis.Client
+var Rdb *redis.Client
+var ctx = context.Background()
 
-func InitRedis() {
-	cfg := config.Cfg.Redis
-	RedisClient = redis.NewClient(&redis.Options{
-		Addr:     cfg.Addr,
-		Password: cfg.Password,
-		DB:       cfg.DB,
+// InitRedis initializes the Redis connection
+func InitRedis() error {
+	redisAddr := os.Getenv("REDIS_ADDR")
+	if redisAddr == "" {
+		redisAddr = "localhost:6379"
+	}
+
+	Rdb = redis.NewClient(&redis.Options{
+		Addr:     redisAddr,
+		Password: "",
+		DB:       0,
 	})
 
-	_, err := RedisClient.Ping(RedisClient.Context()).Result()
+	// Test the Redis connection
+	_, err := Rdb.Ping(ctx).Result()
 	if err != nil {
-		log.Fatalf("Could not connect to Redis: %v", err)
+		return fmt.Errorf("failed to connect to Redis: %v", err)
 	}
-	log.Println("Connected to Redis.")
+
+	log.Println("Connected to Redis successfully.")
+	return nil
+}
+
+// GetRedisClient returns the Redis client
+func GetRedisClient() *redis.Client {
+	return Rdb
 }

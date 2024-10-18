@@ -1,13 +1,13 @@
 -- Install golang migrate: go get -u -d github.com/golang-migrate/migrate/cmd/migrate
 -- Run migrations: migrate -path=./database/migrations -database "postgres://postgres:postgres@localhost:5432/matcha?sslmode=disable" up
 
--- Create riders table
+-- Create the riders table
 CREATE TABLE IF NOT EXISTS riders (
     id SERIAL PRIMARY KEY,
     name VARCHAR(100) NOT NULL
 );
 
--- Create drivers table
+-- Create the drivers table
 CREATE TABLE IF NOT EXISTS drivers (
     id SERIAL PRIMARY KEY,
     name VARCHAR(100) NOT NULL,
@@ -17,7 +17,7 @@ CREATE TABLE IF NOT EXISTS drivers (
     status VARCHAR(20) DEFAULT 'available' -- 'available', 'on_trip'
 );
 
--- Create trips table
+-- Create the trips table
 CREATE TABLE IF NOT EXISTS trips (
     id SERIAL PRIMARY KEY,
     rider_id INT REFERENCES riders(id),

@@ -1,0 +1,5 @@
+FROM migrate/migrate
+
+# Copy the wait-for.sh script into the container and set executable permissions
+COPY wait-for.sh /wait-for.sh
+RUN chmod +x /wait-for.sh

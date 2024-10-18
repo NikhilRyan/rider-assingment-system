@@ -66,7 +66,7 @@ func RequestRide(w http.ResponseWriter, r *http.Request) {
 	ctx := context.Background()
 	driverHash := driver.Geohash
 	driverJSON, _ := json.Marshal(driver)
-	cache.RedisClient.SRem(ctx, fmt.Sprintf("drivers:%s", driverHash), driverJSON)
+	cache.Rdb.SRem(ctx, fmt.Sprintf("drivers:%s", driverHash), driverJSON)
 
 	// Respond to the rider with driver details
 	response := map[string]interface{}{
@@ -137,7 +137,7 @@ func UpdateDriverLocation(w http.ResponseWriter, r *http.Request) {
 	// Remove driver from old geohash set in Redis
 	if currentDriver.Geohash != "" {
 		currentDriverJSON, _ := json.Marshal(currentDriver)
-		cache.RedisClient.SRem(ctx, fmt.Sprintf("drivers:%s", currentDriver.Geohash), currentDriverJSON)
+		cache.Rdb.SRem(ctx, fmt.Sprintf("drivers:%s", currentDriver.Geohash), currentDriverJSON)
 	}
 
 	// Add driver to new geohash set in Redis if status is 'available'
@@ -151,7 +151,7 @@ func UpdateDriverLocation(w http.ResponseWriter, r *http.Request) {
 			Status:    status,
 		}
 		updatedDriverJSON, _ := json.Marshal(updatedDriver)
-		cache.RedisClient.SAdd(ctx, fmt.Sprintf("drivers:%s", newGeohash), updatedDriverJSON)
+		cache.Rdb.SAdd(ctx, fmt.Sprintf("drivers:%s", newGeohash), updatedDriverJSON)
 	}
 
 	// Respond with success message
@@ -205,9 +205,9 @@ func DriverStatusUpdate(w http.ResponseWriter, r *http.Request) {
 	driverKey := fmt.Sprintf("drivers:%s", driver.Geohash)
 
 	if statusUpdate.Status == "available" {
-		cache.RedisClient.SAdd(ctx, driverKey, driverJSON)
+		cache.Rdb.SAdd(ctx, driverKey, driverJSON)
 	} else {
-		cache.RedisClient.SRem(ctx, driverKey, driverJSON)
+		cache.Rdb.SRem(ctx, driverKey, driverJSON)
 	}
 
 	// Respond with success message
@@ -325,7 +325,7 @@ func CreateDriver(w http.ResponseWriter, r *http.Request) {
 	if driver.Status == "available" && driver.Geohash != "" {
 		ctx := context.Background()
 		driverJSON, _ := json.Marshal(driver)
-		cache.RedisClient.SAdd(ctx, fmt.Sprintf("drivers:%s", driver.Geohash), driverJSON)
+		cache.Rdb.SAdd(ctx, fmt.Sprintf("drivers:%s", driver.Geohash), driverJSON)
 	}
 
 	w.Header().Set("Content-Type", "application/json")
@@ -417,7 +417,7 @@ func CompleteTrip(w http.ResponseWriter, r *http.Request) {
 	if driver.Status == "available" && driver.Geohash != "" {
 		ctx := context.Background()
 		driverJSON, _ := json.Marshal(driver)
-		cache.RedisClient.SAdd(ctx, fmt.Sprintf("drivers:%s", driver.Geohash), driverJSON)
+		cache.Rdb.SAdd(ctx, fmt.Sprintf("drivers:%s", driver.Geohash), driverJSON)
 	}
 
 	response := map[string]string{"message": "Trip completed"}

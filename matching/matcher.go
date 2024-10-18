@@ -17,7 +17,7 @@ func FindNearestDriver(riderLat, riderLon float64) (*models.Driver, error) {
 	ctx := context.Background()
 
 	for _, hash := range neighbors {
-		drivers, err := cache.RedisClient.SMembers(ctx, fmt.Sprintf("drivers:%s", hash)).Result()
+		drivers, err := cache.Rdb.SMembers(ctx, fmt.Sprintf("drivers:%s", hash)).Result()
 		if err != nil {
 			continue
 		}
