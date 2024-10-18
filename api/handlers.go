@@ -5,6 +5,8 @@ import (
 	"database/sql"
 	"encoding/json"
 	"fmt"
+	"io/ioutil"
+	"math"
 	"net/http"
 	"rider-assignment-system/cache"
 	"rider-assignment-system/database"
@@ -419,6 +421,120 @@ func CompleteTrip(w http.ResponseWriter, r *http.Request) {
 	}
 
 	response := map[string]string{"message": "Trip completed"}
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(response)
+}
+
+// Haversine function to calculate the distance between two latitude/longitude points
+func haversine(lat1, lon1, lat2, lon2 float64) float64 {
+	const R = 6371 // Earth's radius in km
+
+	dLat := (lat2 - lat1) * math.Pi / 180.0
+	dLon := (lon2 - lon1) * math.Pi / 180.0
+
+	lat1 = lat1 * math.Pi / 180.0
+	lat2 = lat2 * math.Pi / 180.0
+
+	a := math.Sin(dLat/2)*math.Sin(dLat/2) +
+		math.Sin(dLon/2)*math.Sin(dLon/2)*math.Cos(lat1)*math.Cos(lat2)
+	c := 2 * math.Atan2(math.Sqrt(a), math.Sqrt(1-a))
+
+	return R * c // Distance in km
+}
+
+// GetRoadDistance fetches the road distance using an external service (Google Maps, OpenStreetMap, etc.)
+func GetRoadDistance(lat1, lon1, lat2, lon2 float64) (float64, error) {
+	// Example implementation using OpenStreetMap's OSRM
+	baseURL := "http://router.project-osrm.org/route/v1/driving"
+	coords := fmt.Sprintf("%f,%f;%f,%f", lon1, lat1, lon2, lat2)
+	url := fmt.Sprintf("%s/%s?overview=false", baseURL, coords)
+
+	response, err := http.Get(url)
+	if err != nil {
+		return 0, fmt.Errorf("failed to fetch road distance: %v", err)
+	}
+	defer response.Body.Close()
+
+	body, err := ioutil.ReadAll(response.Body)
+	if err != nil {
+		return 0, fmt.Errorf("failed to read response body: %v", err)
+	}
+
+	var result map[string]interface{}
+	if err := json.Unmarshal(body, &result); err != nil {
+		return 0, fmt.Errorf("failed to parse JSON response: %v", err)
+	}
+
+	// Extract the distance
+	routes, ok := result["routes"].([]interface{})
+	if !ok || len(routes) == 0 {
+		return 0, fmt.Errorf("no routes found in response")
+	}
+
+	route, ok := routes[0].(map[string]interface{})
+	if !ok {
+		return 0, fmt.Errorf("invalid route format")
+	}
+
+	distance, ok := route["distance"].(float64)
+	if !ok {
+		return 0, fmt.Errorf("distance not found in route")
+	}
+
+	return distance / 1000.0, nil // Convert to kilometers
+}
+
+// DistanceHandler calculates the distance between two points based on geohashes or coordinates
+func DistanceHandler(w http.ResponseWriter, r *http.Request) {
+	var request struct {
+		Geohash1 string  `json:"geohash1"`
+		Geohash2 string  `json:"geohash2"`
+		Lat1     float64 `json:"lat1"`
+		Lon1     float64 `json:"lon1"`
+		Lat2     float64 `json:"lat2"`
+		Lon2     float64 `json:"lon2"`
+		UseRoad  bool    `json:"use_road"` // Optional: whether to calculate road distance
+	}
+
+	err := json.NewDecoder(r.Body).Decode(&request)
+	if err != nil {
+		http.Error(w, "Invalid request payload", http.StatusBadRequest)
+		return
+	}
+
+	var lat1, lon1, lat2, lon2 float64
+
+	// Decode geohashes if provided
+	if request.Geohash1 != "" && request.Geohash2 != "" {
+		lat1, lon1 = geohash.Decode(request.Geohash1)
+		lat2, lon2 = geohash.Decode(request.Geohash2)
+	} else if request.Lat1 != 0 && request.Lon1 != 0 && request.Lat2 != 0 && request.Lon2 != 0 {
+		lat1 = request.Lat1
+		lon1 = request.Lon1
+		lat2 = request.Lat2
+		lon2 = request.Lon2
+	} else {
+		http.Error(w, "Invalid input: provide either geohashes or coordinates", http.StatusBadRequest)
+		return
+	}
+
+	// Calculate the Haversine distance
+	haversineDistance := haversine(lat1, lon1, lat2, lon2)
+
+	response := map[string]interface{}{
+		"haversine_distance_km": haversineDistance,
+	}
+
+	// Optionally, calculate the road distance if requested
+	if request.UseRoad {
+		roadDistance, err := GetRoadDistance(lat1, lon1, lat2, lon2)
+		if err != nil {
+			http.Error(w, fmt.Sprintf("Failed to get road distance: %v", err), http.StatusInternalServerError)
+			return
+		}
+		response["road_distance_km"] = roadDistance
+	}
+
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(response)
 }

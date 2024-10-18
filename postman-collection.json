@@ -170,6 +170,30 @@
         }
       },
       "response": []
+    },
+    {
+      "name": "Calculate Distance",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"geohash1\": \"9q8yy\",\n  \"geohash2\": \"9q8yx\",\n  \"use_road\": true\n}"
+        },
+        "url": {
+          "raw": "http://localhost:8080/distance",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "8080",
+          "path": ["distance"]
+        }
+      },
+      "response": []
     }
   ]
 }

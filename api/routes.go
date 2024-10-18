@@ -24,6 +24,9 @@ func RegisterRoutes() http.Handler {
 	router.HandleFunc("/trips/{trip_id}", GetTrip).Methods("GET")
 	router.HandleFunc("/trips/{trip_id}/complete", CompleteTrip).Methods("PUT")
 
+	// Distance endpoint
+	router.HandleFunc("/distance", DistanceHandler).Methods("POST")
+
 	// Add CORS support
 	cors := handlers.CORS(
 		handlers.AllowedOrigins([]string{"*"}),
