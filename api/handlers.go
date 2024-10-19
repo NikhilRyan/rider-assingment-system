@@ -538,3 +538,29 @@ func DistanceHandler(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(response)
 }
+
+// GeoIndexingHandler handles requests to find nearby points using geo-indexing techniques
+func GeoIndexingHandler(w http.ResponseWriter, r *http.Request) {
+	lat, err := strconv.ParseFloat(r.URL.Query().Get("lat"), 64)
+	if err != nil {
+		http.Error(w, "Invalid latitude", http.StatusBadRequest)
+		return
+	}
+
+	lon, err := strconv.ParseFloat(r.URL.Query().Get("lon"), 64)
+	if err != nil {
+		http.Error(w, "Invalid longitude", http.StatusBadRequest)
+		return
+	}
+
+	technique := geohash.GeoIndexingTechnique(r.URL.Query().Get("technique"))
+	maxRetries := 3
+
+	results, err := geohash.SearchNearbyWithRetries(lat, lon, technique, maxRetries)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusNotFound)
+		return
+	}
+
+	json.NewEncoder(w).Encode(results)
+}

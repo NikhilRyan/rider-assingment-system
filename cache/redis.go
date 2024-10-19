@@ -9,22 +9,26 @@ import (
 )
 
 var Rdb *redis.Client
-var ctx = context.Background()
 
-// InitRedis initializes the Redis connection
-func InitRedis() error {
-	redisAddr := os.Getenv("REDIS_ADDR")
-	if redisAddr == "" {
-		redisAddr = "localhost:6379"
+// InitializeRedis initializes the Redis client
+func InitializeRedis() error {
+	redisHost := os.Getenv("REDIS_HOST")
+	redisPort := os.Getenv("REDIS_PORT")
+
+	if redisHost == "" {
+		redisHost = "localhost"
+	}
+	if redisPort == "" {
+		redisPort = "6379"
 	}
 
+	addr := fmt.Sprintf("%s:%s", redisHost, redisPort)
 	Rdb = redis.NewClient(&redis.Options{
-		Addr:     redisAddr,
-		Password: "",
-		DB:       0,
+		Addr: addr,
 	})
 
-	// Test the Redis connection
+	// Check the Redis connection
+	ctx := context.Background()
 	_, err := Rdb.Ping(ctx).Result()
 	if err != nil {
 		return fmt.Errorf("failed to connect to Redis: %v", err)

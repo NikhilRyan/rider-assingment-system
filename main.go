@@ -4,6 +4,7 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"rider-assignment-system/geohash"
 	"time"
 
 	"rider-assignment-system/api"
@@ -28,10 +29,23 @@ func main() {
 		log.Fatalf("Failed to initialize the database: %v", err)
 	}
 
-	// Initialize Redis connection
-	if err := cache.InitRedis(); err != nil {
+	// Initialize Redis
+	if err := cache.InitializeRedis(); err != nil {
 		log.Fatalf("Failed to initialize Redis: %v", err)
 	}
+
+	// Set the default geo-indexing technique
+	geohash.SetDefaultTechnique(geohash.GeohashingTechnique)
+
+	// Initialize the R-tree
+	geohash.InitializeRTree()
+
+	// Initialize the Quadtree with specified bounds
+	quadtreeBounds := geohash.Bounds{
+		MinX: -180, MinY: -90, // Minimum bounds for latitude and longitude
+		MaxX: 180, MaxY: 90, // Maximum bounds for latitude and longitude
+	}
+	geohash.InitializeGlobalQuadtree(quadtreeBounds)
 
 	// Register routes for the API
 	router := api.RegisterRoutes()

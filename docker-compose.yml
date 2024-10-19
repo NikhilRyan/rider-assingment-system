@@ -1,29 +1,12 @@
-version: '3.7'
+version: '3.8'
 
 services:
-  app:
-    build:
-      context: .
-      dockerfile: docker/Dockerfile
-    ports:
-      - "8080:8080"
-    depends_on:
-      - db
-      - redis
-    environment:
-      - DB_HOST=db
-      - DB_PORT=5432
-      - DB_USER=postgres
-      - DB_PASSWORD=postgres
-      - DB_NAME=matcha
-      - REDIS_ADDR=redis:6379
-
   db:
     image: postgres:13
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
-      POSTGRES_DB: matcha
+      POSTGRES_DB: mydatabase
     ports:
       - "5432:5432"
     volumes:
@@ -33,6 +16,39 @@ services:
     image: redis:6
     ports:
       - "6379:6379"
+
+  migrate:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    command: ["./migrate"]
+    depends_on:
+      - db
+    environment:
+      DB_HOST: db
+      DB_PORT: 5432
+      DB_USER: postgres
+      DB_PASSWORD: postgres
+      DB_NAME: mydatabase
+
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    command: ["./main"]
+    depends_on:
+      - migrate
+      - redis
+    ports:
+      - "8080:8080"
+    environment:
+      DB_HOST: db
+      DB_PORT: 5432
+      DB_USER: postgres
+      DB_PASSWORD: postgres
+      DB_NAME: mydatabase
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
 
 volumes:
   postgres_data:

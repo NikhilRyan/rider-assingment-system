@@ -194,6 +194,154 @@
         }
       },
       "response": []
+    },
+    {
+      "name": "GeoIndexing Request with Geohashing",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "http://localhost:8080/geoindex?lat=37.7749&lon=-122.4194&technique=geohashing",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8080",
+          "path": [
+            "geoindex"
+          ],
+          "query": [
+            {
+              "key": "lat",
+              "value": "37.7749"
+            },
+            {
+              "key": "lon",
+              "value": "-122.4194"
+            },
+            {
+              "key": "technique",
+              "value": "geohashing"
+            }
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "GeoIndexing Request with R-tree",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "http://localhost:8080/geoindex?lat=37.7749&lon=-122.4194&technique=rtree",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8080",
+          "path": [
+            "geoindex"
+          ],
+          "query": [
+            {
+              "key": "lat",
+              "value": "37.7749"
+            },
+            {
+              "key": "lon",
+              "value": "-122.4194"
+            },
+            {
+              "key": "technique",
+              "value": "rtree"
+            }
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "GeoIndexing Request with Quadtree",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "http://localhost:8080/geoindex?lat=37.7749&lon=-122.4194&technique=quadtree",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8080",
+          "path": [
+            "geoindex"
+          ],
+          "query": [
+            {
+              "key": "lat",
+              "value": "37.7749"
+            },
+            {
+              "key": "lon",
+              "value": "-122.4194"
+            },
+            {
+              "key": "technique",
+              "value": "quadtree"
+            }
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "GeoIndexing Request with Default Technique",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "http://localhost:8080/geoindex?lat=37.7749&lon=-122.4194",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8080",
+          "path": [
+            "geoindex"
+          ],
+          "query": [
+            {
+              "key": "lat",
+              "value": "37.7749"
+            },
+            {
+              "key": "lon",
+              "value": "-122.4194"
+            }
+          ]
+        }
+      },
+      "response": []
     }
   ]
 }

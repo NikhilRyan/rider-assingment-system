@@ -27,6 +27,9 @@ func RegisterRoutes() http.Handler {
 	// Distance endpoint
 	router.HandleFunc("/distance", DistanceHandler).Methods("POST")
 
+	// Add the GeoIndexingHandler route
+	router.HandleFunc("/geoindex", GeoIndexingHandler).Methods("GET")
+
 	// Add CORS support
 	cors := handlers.CORS(
 		handlers.AllowedOrigins([]string{"*"}),

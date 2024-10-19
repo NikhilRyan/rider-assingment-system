@@ -3,6 +3,7 @@ module rider-assignment-system
 go 1.23
 
 require (
+	github.com/dhconnelly/rtreego v1.2.0
 	github.com/go-redis/redis/v8 v8.11.5
 	github.com/golang-migrate/migrate/v4 v4.18.1
 	github.com/gorilla/handlers v1.5.1
